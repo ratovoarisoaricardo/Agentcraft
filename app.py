@@ -1,5 +1,6 @@
 import streamlit as st
 import time
+import html
 from core.orchestrator import SwarmOrchestrator
 
 # Page Configuration
@@ -31,7 +32,7 @@ st.markdown("""
         border-radius: 4px;
     }
 </style>
-""", unsafe_allow_headers=True)
+""", unsafe_allow_html=True)
 
 # Title & Description
 st.title("🤖 AgentCraft AI")
@@ -57,7 +58,7 @@ with st.sidebar:
         <div class="agent-role">Executive Technical Writer</div>
         <small>Specialty: Report Synthesis & Markdown Formatting</small>
     </div>
-    """, unsafe_allow_headers=True)
+    """, unsafe_allow_html=True)
     
     st.divider()
     st.info("Assign a high-level goal to the swarm and watch the agents collaborate in real-time.")
@@ -70,6 +71,7 @@ goal_input = st.text_input(
 )
 
 if st.button("🚀 Launch Agent Swarm Mission"):
+    sanitized_goal = html.escape(goal_input.strip())
     orchestrator = SwarmOrchestrator()
     
     col1, col2 = st.columns([1, 1])
@@ -79,7 +81,7 @@ if st.button("🚀 Launch Agent Swarm Mission"):
         log_container = st.empty()
         
         with st.spinner("Swarm agents collaborating..."):
-            result = orchestrator.run_swarm(goal_input)
+            result = orchestrator.run_swarm(sanitized_goal)
             
             for log in result["logs"]:
                 st.markdown(f"""
@@ -87,7 +89,7 @@ if st.button("🚀 Launch Agent Swarm Mission"):
                     <strong>{log['icon']} {log['agent']}</strong> <em>({log['role']})</em><br/>
                     {log['message']}
                 </div>
-                """, unsafe_allow_headers=True)
+                """, unsafe_allow_html=True)
                 time.sleep(0.3)
 
     with col2:
@@ -100,3 +102,10 @@ if st.button("🚀 Launch Agent Swarm Mission"):
             file_name="AgentCraft_Executive_Report.md",
             mime="text/markdown"
         )
+
+# Footer
+st.markdown("""
+<footer style="margin-top: 50px; text-align: center; color: #a0a0b0; font-size: 0.85rem; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 20px;">
+    © 2026 Ricardo Ratovoarisoa. All rights reserved. Built with passion & Enterprise Standards.
+</footer>
+""", unsafe_allow_html=True)
